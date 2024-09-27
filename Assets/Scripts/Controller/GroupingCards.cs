@@ -5,39 +5,64 @@ using UnityEngine.UI;
 
 public class GroupingCards : MonoBehaviour
 {
-    public List<Card> _allCards;
-    public List<Card> firstBunch;
-    public List<Card> secondBunch;
-    public List<Card> thirdBunch;
-    public List<Card> fourBunch;
-    public RectMask2D groupMask;
+    public GameObject[] _allCards;
+    /*    public List<List<Card>> _allBunches;
+        public List<Card> firstBunch;
+        public List<Card> secondBunch;
+        public List<Card> thirdBunch;
+        public List<Card> fourBunch;*/
+    public Card[,] sortedCards;
+    public int bunchCount = 5;
+    public int cardsInBunchCount = 10;
+    public RectMask2D[] groupMask;
+    /*
     public SpriteMask spriteMask;    
     public RectMask2D groupMask2;
-    public SpriteMask spriteMask2;
-    private void Start()
+    public SpriteMask spriteMask2;*/
+    private void Awake()
     {
-        foreach (var item in _allCards)
+        _allCards = GameObject.FindGameObjectsWithTag("Card");
+        sortedCards = new Card[bunchCount, cardsInBunchCount];
+    }
+    public void GroupBy()
+    {
+
+        for (int i = 0; i < groupMask.Length; i++)
         {
-            if (IsInsideRectMask(item.GetComponent<RectTransform>(), spriteMask))
+            Debug.Log(groupMask[i]);
+            int k = 0;
+            for (int j = 0; j < _allCards.Length; j++)
             {
-                firstBunch.Add(item);
+                if (IsInsideRectMask(_allCards[j].GetComponent<RectTransform>(), groupMask[i]))
+                {
+                    Debug.Log(_allCards[j]);
+                    sortedCards[i, k] = _allCards[j].GetComponent<Card>();
+                    k++;
+                    if (k == 10)
+                        break;
+                }
             }
-            else if (IsInsideRectMask(item.GetComponent<RectTransform>(), groupMask))
-            {
-                secondBunch.Add(item);
-            }            
-            else if (IsInsideRectMask(item.GetComponent<RectTransform>(), spriteMask2))
-            {
-                thirdBunch.Add(item);
-            }
-            else if (IsInsideRectMask(item.GetComponent<RectTransform>(), groupMask2))
-            {
-                fourBunch.Add(item);
-            }
+
         }
 
+        PrintTwiceArray();
     }
 
+    private void PrintTwiceArray()
+    {
+        for (int i = 0; i < sortedCards.GetLength(0); i++)
+        {
+            string row = "";
+
+
+            for (int j = 0; j < sortedCards.GetLength(1); j++)
+            {
+                row += sortedCards[i, j] + "\t";
+            }
+
+            Debug.Log(row);
+        }
+    }
 
     bool IsInsideRectMask(RectTransform uiElement, RectMask2D mask)
     {
