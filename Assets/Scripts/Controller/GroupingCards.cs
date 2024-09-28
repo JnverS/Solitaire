@@ -35,7 +35,7 @@ public class GroupingCards : MonoBehaviour
             {
                 if (IsInsideRectMask(_allCards[j].GetComponent<RectTransform>(), groupMask[i]))
                 {
-                    Debug.Log(_allCards[j]);
+                    //Debug.Log(_allCards[j]);
                     sortedCards[i, k] = _allCards[j].GetComponent<Card>();
                     k++;
                     if (k == 10)

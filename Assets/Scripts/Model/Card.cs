@@ -5,8 +5,8 @@ using UnityEngine.EventSystems;
 
 public class Card : MonoBehaviour, IPointerClickHandler
 {
-    public GameObject child;
-    public GameObject parent;
+    public GameObject childCard;
+    public GameObject parentCard;
     public rating rat;
     public void OnPointerClick(PointerEventData eventData)
     {

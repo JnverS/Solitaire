@@ -6,26 +6,29 @@ public class UICollisionDetector : MonoBehaviour
 {
 
 
-   public void CheckCollision(Card[,] sortedCards)
+    public void CheckCollision(Card[,] sortedCards)
     {
-        //for (int i = 0; i < sortedCards.GetLength(0); i++)
+        int totalColumns = sortedCards.GetLength(1);
+         for (int i = 0; i < sortedCards.GetLength(0); i++)
         {
             for (int j = 0; j < sortedCards.GetLength(1); j++)
             {
-                int totalColumns = sortedCards.GetLength(1) - 1;
- 
-                var arr =  Enumerable.Range(0, totalColumns)
-                                 .Where(k=>k!=j)
-                                 .Select(k => sortedCards[0, k])
+                var arr = Enumerable.Range(0, totalColumns)
+                                 .Where(k => k != j)
+                                 .Select(k => sortedCards[i, k])
                                  .ToArray();
-                
-                RectTransform closestElement = FindParentElement(sortedCards[0,j].GetComponent<RectTransform>(), arr);
-                if (closestElement != null)
+                if (sortedCards[i, j] != null)
                 {
-                    Debug.Log("Родитель для  "+ sortedCards[0,j] + " - " + closestElement.name + "" + closestElement.GetSiblingIndex());
+                    RectTransform closestElement = FindParentElement(sortedCards[i, j].GetComponent<RectTransform>(), arr);
+
+                    if (closestElement != null)
+                    {
+                        Debug.Log("Родитель для  " + sortedCards[i, j] + " - " + closestElement.name + "" + closestElement.GetSiblingIndex());
+                        sortedCards[i, j].parentCard = closestElement.gameObject;
+                        closestElement.GetComponent<Card>().childCard = sortedCards[i, j].gameObject;
+                    }
                 }
             }
-
         }
     }
 
@@ -33,25 +36,21 @@ public class UICollisionDetector : MonoBehaviour
     RectTransform FindParentElement(RectTransform target, Card[] elements)
     {
         RectTransform closest = null;
-        float closestDistance = Mathf.Infinity;
-        int sIndexTarget = target.GetSiblingIndex();
-        int sIndexParent = elements[elements.Length-1].GetComponent<RectTransform>().GetSiblingIndex() ; 
 
         foreach (Card element in elements)
         {
-            RectTransform el = element.GetComponent<RectTransform>();
-           // Debug.Log(el.name);
-            float distance = Vector2.Distance(target.position, el.position);
-            int siblingIndex = el.GetSiblingIndex();
-
-            if (distance <= closestDistance && siblingIndex > sIndexTarget)
+            if (element != null)
             {
-                if (siblingIndex <= sIndexParent)
+                RectTransform el = element.GetComponent<RectTransform>();
+
+                float distance = Mathf.Abs(el.position.z) - Mathf.Abs(target.position.z);
+
+                if (Mathf.Approximately(.1f, (float)Math.Round(distance, 1)) || Mathf.Approximately(.09f, (float)Math.Round(distance, 2)))
                 {
-                    sIndexParent = siblingIndex;
-                    closestDistance = distance;
                     closest = el;
+                    break;
                 }
+
             }
         }
 
