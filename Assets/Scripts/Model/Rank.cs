@@ -1,4 +1,4 @@
-﻿public enum rating
+﻿public enum Rank
 {
     ace,
     two,
